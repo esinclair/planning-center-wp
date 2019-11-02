@@ -2,10 +2,10 @@
 
 /**
 * Load the base class for the PCO PHP API
-* // http://planningcenter.github.io/api-docs/#schedules
+* // https://api.planningcenteronline.com/groups/v2/events
 
 */
-class PCO_PHP_People {
+class PCO_PHP_Events {
 
 	protected $method;
 	protected $parameters;
@@ -25,49 +25,36 @@ class PCO_PHP_People {
 			$this->parameters = $this->format_parameters( $this->parameters );
 		}
 
-		$base_url = 'https://api.planningcenteronline.com/people/v2/lists';
+		$base_url = 'https://api.planningcenteronline.com/groups/v2/events';
 
 		return $base_url . '?' . $this->parameters;
 	}
 
-	public function people() 
+	public function events()
 	{	
 
 		if ( $this->parameters ) {
 			$this->parameters = $this->format_parameters( $this->parameters );
 		}
 		
-		$base_url = 'https://api.planningcenteronline.com/people/v2/people/';
+		$base_url = 'https://api.planningcenteronline.com/groups/v2/events';
 
-		return $base_url . '?' . $this->parameters;
+		return $base_url; // . '?' . $this->parameters;
 
 	}
 
-
-
-	public function format_parameters( $parameters ) 
+	public function format_parameters( $parameters )
 	{
 		
 		$params = array();
 		$string = '';
 
 		switch ($this->method) {
-			case 'lists':
-				$keys = array( 'name', 'batch_completed_at', 'created_at', 'updated_at' );
-				break;
-			case 'people':
+//			case 'lists':
+//				$keys = array( 'name', 'batch_completed_at', 'created_at', 'updated_at' );
+//				break;
+			case 'events':
 				$keys = array(
-					'first_name',
-					'last_name', 
-					'nickname',
-					'goes_by_name',
-					'middle_name',
-					'birthdate',
-					'anniversary',
-					'gender',
-					'grade',
-					'child',
-					'status'
 				);
 			default:
 				$keys = array();

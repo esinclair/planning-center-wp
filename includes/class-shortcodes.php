@@ -1,122 +1,98 @@
-<?php 
+<?php
 
 /**
-* Load the base class
-*/
-class Planning_Center_WP_Shortcodes {
-	
-	function __construct()	{
-		
-		add_shortcode( 'pcwp_checkins', array( $this, 'checkins' ) );
-		add_shortcode( 'pcwp_giving', array( $this, 'giving' ) );
-		add_shortcode( 'pcwp_people', array( $this, 'people' ) );
-		add_shortcode( 'pcwp_services', array( $this, 'services' ) );
+ * Load the base class
+ */
+class Planning_Center_WP_Shortcodes
+{
 
-	}
+    function __construct()
+    {
 
-	public function people( $atts ) 
-	{
-		$args = shortcode_atts( array(
-			'method' 	=> '',
-			'parameters'	=> '',
-    	), $atts );
+        add_shortcode('pcwp_events', array($this, 'events'));
 
-    	$api = new PCO_PHP_API;
-    	$people = $api->get_people( $args );
-
-    	ob_start(); ?>
-
-    	<?php 
-    		echo '<h3 class="planning-center-wp-title">' . ucwords( $args['method'] ) . ' in People</h3>';
-    		if ( is_array( $people ) ) {
-				
-				echo '<ul class="planning-center-wp-list planning-center-wp-people-list">';
-				foreach( $people as $person ) {
-					
-					echo '<li>' . $person->attributes->first_name . ' ' . $person->attributes->last_name . '</li>';
-				}
-				echo '</ul>';
-			} else {
-				echo '<p class="planning-center-wp-not-found">No results found.</p>';
-			}
-		?>
-	
-		<?php  $content = ob_get_contents();
-		ob_end_clean();
-
-		return apply_filters('planning_center_wp_people_shortcode_output', $content ); 	
-
-	}
+    }
 
 
+    public function events($atts)
+    {
+        $args = shortcode_atts(array(
+            'group' => '',
+            'past' => '',
+            'future' => '',
+            'filters',
+            'parameters' => '',
+        ), $atts);
 
-	public function services( $atts ) 
-	{
-		$args = shortcode_atts( array(
-			'method' 	=> '',
-			'parameters'	=> '',
-    	), $atts );
+        static $api;
+        if ($api == null) {
+            $api = new PCO_PHP_API;
+        }
+        $events = $api->get_events($args);
 
-    	$api = new PCO_PHP_API;
-    	$services = $api->get_services( $args );
 
-    	ob_start(); ?>
+        ob_start(); ?>
 
-    	<?php 
-    		echo '<h3 class="planning-center-wp-title">' . ucwords( $args['method'] ) . ' in Services</h3>';
-    		if ( is_array( $services ) && !empty( $services ) ) {
-				// @todo load a certain view based on the method passed
-				echo '<ul class="planning-center-wp-list planning-center-wp-services-list">';
-				foreach( $services as $service ) {
-					echo '<li>' . $service->attributes->first_name . ' ' . $service->attributes->last_name . '</li>';
-				}
-				echo '</ul>';
-			} else {
-				echo '<p class="planning-center-wp-not-found">No results found.</p>';
-			}
-		?>
-	
-		<?php  $content = ob_get_contents();
-		ob_end_clean();
+        <?php
 
-		return apply_filters('planning_center_wp_services_shortcode_output', $content ); 	
-	}
 
-	public function donations( $atts ) 
-	{
-		$a = shortcode_atts( array(
-	        'foo' => 'something',
-	        'bar' => 'something else',
-    	), $atts );
+        if (is_array($events)) {
+            echo '<link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.css" rel="stylesheet"/>
+                <link  href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.css" rel="stylesheet"/>
+                <link  href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/list/main.css" rel="stylesheet"/>
+                <link  href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.css" rel="stylesheet"/>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/list/main.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/locales/es-us.js"></script>
+                <div id="calendar" width="100%"></div>
+                <script>
+                        var calendarEl = document.getElementById(\'calendar\');
+                
+                        var calendar = new FullCalendar.Calendar(calendarEl, {
+                            views: {
+                                dayGrid: {},
+                                weekGrid: {},
+                                mothGrid: {}
+                            },
+                            header: {
+                                left: \'prev,today,next\',
+                                center: \'title\',
+                                right: \'dayGridMonth,listMonth\'
+                              },
+                               contentHeight:"auto",
+                          plugins: [
+                              \'dayGrid\' ,
+                              \'list\' 
+                              ],
+                              defaultView: \'listMonth\',
+                timeZone: \'local\',
+                events : [
+                ';
+            foreach ($events as $event) {
+                $groupInfo = $api->get_group_details( $event->relationships->group->data->id );
+                echo '{';
+                echo 'title: "' . $event->attributes->name . ': ' . $groupInfo->attributes->name . '",';
+                echo 'start: "' . $event->attributes->starts_at . '", ';
+                echo 'end: "' . $event->attributes->ends_at . '" ';
+                echo '},';
+            }
+            echo ']});calendar.render();</script>';
+        } else {
+            echo '<p class="planning-center-wp-not-found">No results found.</p>';
+        }
 
-    	$api = new PCO_PHP_API;
-    	$donations = $api->get_donations();
 
-    	ob_start(); ?>
 
-    	<?php 
+        ?>
 
-    		if ( is_array( $donations ) ) {
-				echo '<h3>Donations</h3>';
-				echo '<ul>';
-				foreach( $donations as $item ) {
-					echo '<pre>';
-					print_r( $item );
-					echo '</pre>';
-					// echo '<li>' . $item->attributes->first_name . ' ' . $item->attributes->last_name . '</li>';
-				}
-				echo '</ul>';
-			} else {
-				echo '<p>' . $donations . '</p>';
-			}
-		?>
-	
-		<?php  $content = ob_get_contents();
-		ob_end_clean();
+        <?php $content = ob_get_contents();
+        ob_end_clean();
+        return apply_filters('planning_center_wp_people_shortcode_output', $content);
 
-		return $content; 	
-	}
-	
+    }
+
+
 }
 
 

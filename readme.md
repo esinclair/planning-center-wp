@@ -1,5 +1,5 @@
-# Planning Center WP
-Contributors: endocreative
+# Planning Center Events 
+Contributors: endocreative, Eliot Sinclair
 Donate link: http://www.endocreative.com
 Tags: planning center, church, events, people, services
 Requires at least: 4.6
@@ -18,10 +18,7 @@ The output of the data is controlled by shortcodes. As time goes on, more and mo
 
 The current APIs that are available include:
 
-*   PCO Check-Ins
-*   PCO Giving
-*   PCO People
-*   PCO Services
+*   PCO Group Events
 
 Note that a Planning Center account with a valid app id and secret is required to use the plugin.
 
@@ -29,7 +26,7 @@ Note that a Planning Center account with a valid app id and secret is required t
 
 1. Upload the plugin files to the `/wp-content/plugins/planning-center-wp` directory, or install the plugin through the WordPress plugins screen directly.
 1. Activate the plugin through the 'Plugins' screen in WordPress
-1. Use the Planning Center WP settings screen to configure the plugin
+1. Use the Planning Center Events settings screen to configure the plugin
 1. Enter your Planning Center app id and secret
 1. Add a shortcode to the post, page, or widget where you want to display your data 
 
@@ -46,4 +43,12 @@ Please let us know in the support forums what would be most helpful to you and w
 * First version
 
 ## Shortcodes
+[pcwp_events ]
+
+##Docker
+
+####Launch a local Wordpress site with:
+docker-compose up
+####Load the latest plugin by either zipping the entire project and installing via the UI or by using this command:
+docker cp  ../planning-center-wp planning-center-wp_wordpress_1:/var/www/html/wp-content/plugins/
 

@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Planning Center WP
+Plugin Name: Planning Center Events
 Plugin URI: http://www.endocreative.com
 Description: Connect with your Planning Center account and display information
 Author: Endo Creative

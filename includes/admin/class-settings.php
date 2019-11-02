@@ -19,8 +19,8 @@ class Planning_Center_WP_Settings {
 	public function create_settings_page() 
 	{
 		add_menu_page(
-	        __( 'Planning Center WP', 'planning-center-wp' ),
-	        'Planning Center',
+	        __( 'Planning Center Events', 'planning-center-wp' ),
+	        'Planning Center Events',
 	        'manage_options',
 	        'planning-center-wp/planning-center-wp-admin.php',
 	        array( $this, 'settings_page'),
@@ -36,7 +36,7 @@ class Planning_Center_WP_Settings {
 		?>
 
 		<div class="wrap">
-			<h1>Planning Center WP</h1>
+			<h1>Planning Center Events</h1>
 
 			<?php if ( !$options['app_id'] || !$options['secret'] ) {
 				?>
@@ -75,8 +75,7 @@ class Planning_Center_WP_Settings {
 
 			<div class="container">
 				<p><strong>Available shortcodes</strong></p>
-				<p>[pcwp_people method="people"]</p>p>
-				<p>[pcwp_services method="songs"]</p>
+				<p>[pcwp_events]</p>
 			</div>
 			
 		</div>
