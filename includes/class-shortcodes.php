@@ -28,7 +28,7 @@ class Planning_Center_WP_Shortcodes
         if ($api == null) {
             $api = new PCO_PHP_API;
         }
-        $events = $api->get_events($args);
+        list($events, $groups, $secondsRemaining) = $this->getDataAndCache($api, $args);
 
 
         ob_start(); ?>
@@ -70,7 +70,7 @@ class Planning_Center_WP_Shortcodes
                 events : [
                 ';
             foreach ($events as $event) {
-                $groupInfo = $api->get_group_details( $event->relationships->group->data->id );
+                $groupInfo = $groups["".$event->relationships->group->data->id];
                 echo '{';
                 echo 'title: "' . $event->attributes->name . ': ' . $groupInfo->attributes->name . '",';
                 echo 'start: "' . $event->attributes->starts_at . '", ';
@@ -78,6 +78,7 @@ class Planning_Center_WP_Shortcodes
                 echo '},';
             }
             echo ']});calendar.render();</script>';
+            echo $secondsRemaining." seconds until next refresh";
         } else {
             echo '<p class="planning-center-wp-not-found">No results found.</p>';
         }
@@ -90,6 +91,33 @@ class Planning_Center_WP_Shortcodes
         ob_end_clean();
         return apply_filters('planning_center_wp_people_shortcode_output', $content);
 
+    }
+
+    /**
+     * @param PCO_PHP_API $api
+     * @param $args
+     * @return array
+     */
+    public function getDataAndCache(PCO_PHP_API $api, $args)
+    {
+        $events = json_decode(get_post_meta(get_the_ID(), 'eventData', true));
+        $groups = unserialize(get_post_meta(get_the_ID(), 'groupData', true));
+        $refreshDate = intval(get_post_meta(get_the_ID(), 'refreshDate', true));
+        $secondsRemaining = (60 * 5) - (time() - $refreshDate);
+        if (($events == null) OR ($secondsRemaining < 0)) {
+            $events = $api->get_events($args);
+            update_post_meta(get_the_ID(), 'eventData', wp_slash(json_encode($events)));
+
+            $rawgroups = $api->getAllGroups();
+            $groups = array();
+            foreach ($rawgroups as $grp) {
+                $id2 = $grp->id;
+                $groups[$id2] = $grp;
+            }
+            update_post_meta(get_the_ID(), 'groupData', serialize($groups));
+            update_post_meta(get_the_ID(), 'refreshDate', time());
+        }
+        return array($events, $groups, $secondsRemaining);
     }
 
 

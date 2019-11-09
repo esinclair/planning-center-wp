@@ -86,7 +86,7 @@ class PCO_PHP_API
     {
         $id1 = intval($id);
         if (self::$groups[$id1] == null) {
-            $allgroups = $this->getAllPagesOfData('https://api.planningcenteronline.com/groups/v2/groups?');
+            $allgroups = $this->getAllGroups();
             foreach ($allgroups as $grp) {
                 $id2 = intval($grp->id);
                self::$groups[$id2] = $grp;
@@ -124,6 +124,15 @@ class PCO_PHP_API
             }
         }
         return $result;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAllGroups()
+    {
+        $allgroups = $this->getAllPagesOfData('https://api.planningcenteronline.com/groups/v2/groups?');
+        return $allgroups;
     }
 
 
