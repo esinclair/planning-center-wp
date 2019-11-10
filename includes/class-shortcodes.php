@@ -100,13 +100,13 @@ class Planning_Center_WP_Shortcodes
      */
     public function getDataAndCache(PCO_PHP_API $api, $args)
     {
-        $events = json_decode(get_post_meta(get_the_ID(), 'eventData', true));
+        $events = unserialize(get_post_meta(get_the_ID(), 'eventData', true));
         $groups = unserialize(get_post_meta(get_the_ID(), 'groupData', true));
         $refreshDate = intval(get_post_meta(get_the_ID(), 'refreshDate', true));
         $secondsRemaining = (60 * 5) - (time() - $refreshDate);
         if (($events == null) OR ($secondsRemaining < 0)) {
             $events = $api->get_events($args);
-            update_post_meta(get_the_ID(), 'eventData', wp_slash(json_encode($events)));
+            update_post_meta(get_the_ID(), 'eventData', serialize($events));
 
             $rawgroups = $api->getAllGroups();
             $groups = array();
