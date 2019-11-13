@@ -103,8 +103,10 @@ class Planning_Center_WP_Shortcodes
         $events = unserialize(get_post_meta(get_the_ID(), 'eventData', true));
         $groups = unserialize(get_post_meta(get_the_ID(), 'groupData', true));
         $refreshDate = intval(get_post_meta(get_the_ID(), 'refreshDate', true));
-        $secondsRemaining = (60 * 5) - (time() - $refreshDate);
-        if (($events == null) OR ($secondsRemaining < 0)) {
+        $baseRefreshTime = 60 * 60 * 24; // Refresh Daily
+        $secondsRemaining = $baseRefreshTime - (time() - $refreshDate);
+        echo "query: " . $_GET['refresh'];
+        if (($events == null) OR ($secondsRemaining < 0) OR ("true" == $_GET['refresh'])) {
             $events = $api->get_events($args);
             update_post_meta(get_the_ID(), 'eventData', serialize($events));
 
@@ -116,6 +118,7 @@ class Planning_Center_WP_Shortcodes
             }
             update_post_meta(get_the_ID(), 'groupData', serialize($groups));
             update_post_meta(get_the_ID(), 'refreshDate', time());
+            $secondsRemaining = $baseRefreshTime;
         }
         return array($events, $groups, $secondsRemaining);
     }

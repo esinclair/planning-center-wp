@@ -38,6 +38,10 @@ Note that a Planning Center account with a valid app id and secret is required t
 ## Shortcodes
 [pcwp_events]
 
+## Request Parameters
+If you add "refresh=true" to the request parameters of the page containing the pcwp_events shortcode, it will force a refresh of the data from Planning Center.  Otherwise, it will cache results for 24 hours.
+example:  https://mydomain.com/?p=2&refresh=true
+
 ## Docker
 Please update the passwords and users to values of your choice in docker-compose.yml
 #### Launch a local Wordpress site with:
