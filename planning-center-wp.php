@@ -1,11 +1,10 @@
 <?php
 /*
 Plugin Name: Planning Center Events
-Plugin URI: http://www.endocreative.com
-Description: Connect with your Planning Center account and display information
-Author: Endo Creative
+Plugin URI:
+Description: Connect with your Planning Center account and display group Events.
+Author: Eliot Sinclair
 Version: 1.0.0
-Author URI: http://www.endocreative.com
 Text Domain: planning-center-wp
 Domain Path: /languages/
 */
