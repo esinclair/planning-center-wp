@@ -105,7 +105,6 @@ class Planning_Center_WP_Shortcodes
         $refreshDate = intval(get_post_meta(get_the_ID(), 'refreshDate', true));
         $baseRefreshTime = 60 * 60 * 24; // Refresh Daily
         $secondsRemaining = $baseRefreshTime - (time() - $refreshDate);
-        echo "query: " . $_GET['refresh'];
         if (($events == null) OR ($secondsRemaining < 0) OR ("true" == $_GET['refresh'])) {
             $events = $api->get_events($args);
             update_post_meta(get_the_ID(), 'eventData', serialize($events));

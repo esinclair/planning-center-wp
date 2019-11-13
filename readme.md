@@ -46,6 +46,8 @@ example:  https://mydomain.com/?p=2&refresh=true
 Please update the passwords and users to values of your choice in docker-compose.yml
 #### Launch a local Wordpress site with:
 docker-compose up
+http://localhost:8000/wp-admin
+
 #### Load the latest plugin by either zipping the entire project and installing via the UI or by using this command from the source root directory:
 docker cp  ../planning-center-wp planning-center-wp_wordpress_1:/var/www/html/wp-content/plugins/
 
