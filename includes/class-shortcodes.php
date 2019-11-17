@@ -28,7 +28,7 @@ class Planning_Center_WP_Shortcodes
         if ($api == null) {
             $api = new PCO_PHP_API;
         }
-        list($events, $groups, $secondsRemaining) = $this->getDataAndCache($api, $args);
+        list($events, $groups, $secondsRemaining, $groupTypes) = $this->getDataAndCache($api, $args);
 
 
         ob_start(); ?>
@@ -69,12 +69,20 @@ class Planning_Center_WP_Shortcodes
                 timeZone: \'local\',
                 events : [
                 ';
+            $options = get_option('planning_center_wp');
             foreach ($events as $event) {
                 $groupInfo = $groups["".$event->relationships->group->data->id];
                 echo '{';
-                echo 'title: "' . $event->attributes->name . ': ' . $groupInfo->attributes->name . '",';
+                echo 'title: "' . $event->attributes->name;
+                if(!($event->attributes->name == $groupInfo->attributes->name)){
+                    echo ': ' . $groupInfo->attributes->name;
+                }
+
+                echo '",';
                 echo 'start: "' . $event->attributes->starts_at . '", ';
-                echo 'end: "' . $event->attributes->ends_at . '" ';
+                echo 'end: "' . $event->attributes->ends_at . '", ';
+//                echo 'sldfkj: '.$groupInfo->relationships->group_type->data->id.', ';
+                echo 'url: "https://'.$options['church_center_url'].'/groups/'. $this->pcUrlEncodeString($groupTypes[$groupInfo->relationships->group_type->data->id]->attributes->name) .'/'. $this->pcUrlEncodeString($groupInfo->attributes->name) .'" ';
                 echo '},';
             }
             echo ']});calendar.render();</script>';
@@ -93,6 +101,8 @@ class Planning_Center_WP_Shortcodes
 
     }
 
+
+
     /**
      * @param PCO_PHP_API $api
      * @param $args
@@ -103,11 +113,21 @@ class Planning_Center_WP_Shortcodes
         $events = unserialize(get_post_meta(get_the_ID(), 'eventData', true));
         $groups = unserialize(get_post_meta(get_the_ID(), 'groupData', true));
         $refreshDate = intval(get_post_meta(get_the_ID(), 'refreshDate', true));
+        $groupTypes = unserialize(get_post_meta(get_the_ID(), 'groupTypes', true));
         $baseRefreshTime = 60 * 60 * 24; // Refresh Daily
         $secondsRemaining = $baseRefreshTime - (time() - $refreshDate);
         if (($events == null) OR ($secondsRemaining < 0) OR ("true" == $_GET['refresh'])) {
             $events = $api->get_events($args);
             update_post_meta(get_the_ID(), 'eventData', serialize($events));
+            $rawGroupTypes = $api->getGroupTypes();
+            $groupTypes = array();
+            echo "eliot";
+            foreach ($rawGroupTypes as $grpType) {
+                echo $grpType->attributes->name;
+                $id2 = $grpType->id;
+                $groupTypes[$id2] = $grpType;
+            }
+            update_post_meta(get_the_ID(), 'groupTypes', serialize($groupTypes));
 
             $rawgroups = $api->getAllGroups();
             $groups = array();
@@ -119,7 +139,16 @@ class Planning_Center_WP_Shortcodes
             update_post_meta(get_the_ID(), 'refreshDate', time());
             $secondsRemaining = $baseRefreshTime;
         }
-        return array($events, $groups, $secondsRemaining);
+        return array($events, $groups, $secondsRemaining, $groupTypes);
+    }
+
+    /**
+     * @param string
+     * @return string
+     */
+    public function pcUrlEncodeString($str)
+    {
+        return strtolower(preg_replace('/[^A-Za-z0-9\-]/', '-', str_replace(' ', '-', $str)));
     }
 
 

@@ -135,5 +135,10 @@ class PCO_PHP_API
         return $allgroups;
     }
 
+    public function getGroupTypes()
+    {
+        return $this->getAllPagesOfData('https://api.planningcenteronline.com/groups/v2/group_types?');
+    }
+
 
 }

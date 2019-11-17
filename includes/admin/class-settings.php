@@ -65,6 +65,14 @@ class Planning_Center_WP_Settings {
 						<input type="text" value="<?php echo $options['secret']; ?>" name="planning_center_wp[secret]" class="regular-text">
 					</td>
 				</tr>
+                <tr>
+					<th>
+						<label for="secret">Church Center Website</label>
+					</th>
+					<td>
+						<input type="text" value="<?php echo $options['church_center_url']; ?>" name="planning_center_wp[church_center_url]" class="regular-text">
+					</td>
+				</tr>
 
 				<?php wp_nonce_field('submit_planning_center_wp_options', 'planning_center_wp_nonce' ); ?>
 			</table>
@@ -100,6 +108,9 @@ class Planning_Center_WP_Settings {
 
 		if ( isset( $_POST['planning_center_wp']['secret'] ) ) {
 			$options['secret'] = sanitize_text_field( $_POST['planning_center_wp']['secret'] );
+		}
+		if ( isset( $_POST['planning_center_wp']['church_center_url'] ) ) {
+			$options['church_center_url'] = sanitize_text_field( $_POST['planning_center_wp']['church_center_url'] );
 		}
 
 		update_option( 'planning_center_wp', $options );
