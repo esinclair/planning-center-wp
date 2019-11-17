@@ -121,9 +121,7 @@ class Planning_Center_WP_Shortcodes
             update_post_meta(get_the_ID(), 'eventData', serialize($events));
             $rawGroupTypes = $api->getGroupTypes();
             $groupTypes = array();
-            echo "eliot";
             foreach ($rawGroupTypes as $grpType) {
-                echo $grpType->attributes->name;
                 $id2 = $grpType->id;
                 $groupTypes[$id2] = $grpType;
             }
